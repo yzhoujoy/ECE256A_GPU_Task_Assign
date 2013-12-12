@@ -2,8 +2,8 @@
 ////  main.cpp
 ////  GPU_Task_Assign_random
 ////
-////  Created by zhe-mac on 13-12-11.
-////  Copyright (c) 2013年 zhe-mac. All rights reserved.
+////  Created by YING ZHOU on 12/11/13.
+////  Copyright (c) 2013 YING ZHOU. All rights reserved.
 ////
 //
 //#include <iostream>
@@ -15,4 +15,4 @@
 //    std::cout << "Hello, World!\n";
 //    return 0;
 //}
-//
+
