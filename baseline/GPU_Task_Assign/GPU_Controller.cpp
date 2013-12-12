@@ -15,6 +15,7 @@ using namespace std;
 class GPU_Controller{
 
 public:
+    const bool DEBUG_LOG = false;
     map<int,int> GPU_map;     //map<GPU_id,flag> table for GPU status
     map<int,int> GPU_assign;  //map<GPU_id,task> talbe for GPU assignment
     int ready_ctr,sum_buf;
@@ -32,20 +33,20 @@ public:
             GPU_map[c1]=1;
             GPU_map[c2]=1;
             if (gpu_16[c1]->f_ready==1 && gpu_16[c2]->f_ready==1) {
-                cout<<c1<<" : ready"<< c2<<" :ready"<<endl;
+                if (DEBUG_LOG) cout<<c1<<" : ready"<< c2<<" :ready"<<endl;
                 ready_ctr+=2;
                 GPU_map[c1]=0;
                 GPU_map[c2]=0;
             }else if (gpu_16[c1]->f_idle==1 && gpu_16[c2]->f_ready==1){
-                cout<<c1<<": idle"<<c2<<" : force idle"<<endl;
+                if (DEBUG_LOG) cout<<c1<<": idle"<<c2<<" : force idle"<<endl;
                 gpu_16[c1]->passive_idle();
                 gpu_16[c2]->passive_idle_();
             }else if (gpu_16[c1]->f_ready==1 && gpu_16[c2]->f_idle==1){
-                cout<<c1<<": force idle"<<c2<<" : idle"<<endl;
+                if (DEBUG_LOG) cout<<c1<<": force idle"<<c2<<" : idle"<<endl;
                 gpu_16[c1]->passive_idle_();
                 gpu_16[c2]->passive_idle();
             }else if (gpu_16[c1]->f_idle==1 && gpu_16[c2]->f_idle==1){
-                cout<<c1<<": idle"<<c2<<" : idle"<<endl;
+                if (DEBUG_LOG) cout<<c1<<": idle"<<c2<<" : idle"<<endl;
                 gpu_16[c1]->passive_idle();
                 gpu_16[c2]->passive_idle();
             }
@@ -133,7 +134,7 @@ public:
                 r++;
             }
         }
-        cout<<"number of +3"<<r<<endl;
+        if (DEBUG_LOG) cout<<"number of +3"<<r<<endl;
         sum_buf = num_tog_buf;
         return sum_buf;
     }

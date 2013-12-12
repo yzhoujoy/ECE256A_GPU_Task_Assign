@@ -13,7 +13,8 @@ using namespace std;
 
 class Buffer{
 public:
-    int task_ctr=0;        
+    const bool DEBUG_LOG = false;
+    int task_ctr=0;
     int sum=0;
     int out_num;                               //number of tasks should be sent
     map<int, double> tasks;
@@ -45,8 +46,8 @@ public:
     /*caculate size of output array*/
     double * buffer_output(int num_output){
         out_num=0;               
-        cout<<"used buffer size = "<<(int)tasks.size()<<endl;
-        cout<<"number of ready GPUs = "<< num_output<<endl;
+        if (DEBUG_LOG) cout<<"used buffer size = "<<(int)tasks.size()<<endl;
+        if (DEBUG_LOG) cout<<"number of ready GPUs = "<< num_output<<endl;
         
         //assign size of output array
         if (tasks.size()<num_output) out_num=(int)tasks.size();
@@ -61,7 +62,7 @@ public:
             tasks.erase(iter);
         }
         
-        cout<<"size of output array = "<< out_num<<endl;
+        if (DEBUG_LOG)  cout<<"size of output array = "<< out_num<<endl;
         return output_arr;
     }
     

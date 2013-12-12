@@ -12,16 +12,19 @@
 #include "Buffer.h"
 #include "Buffer.cpp"
 #include <map>
+#include <string>
 using namespace std;
 
-const int DURATION_SIZE=20;
-const int TEST_VECTOR_ID=1;
+//const int DURATION_SIZE=20;
+//const int TEST_VECTOR_ID=1;
+const bool DEBUG_LOG = false;
 // 0: all 1
 // 1: random
 // 2: all 0.75
 // 3: all 0.5
-
-int main(){
+string TEST_VECTOR_ID_NAMES[] = {"all 1", "random", "all 0.75", "all 0.5"};
+//int main(){
+int testCase(int TEST_VECTOR_ID, int DURATION_SIZE) {
     srand(999);
     int sum_cost=0;
     GPU *gpus[16];
@@ -66,7 +69,7 @@ int main(){
             }
             break;
             
-        default: cout<<"err: wrong TEST_VECTOR_ID"<<endl;
+        default: if (DEBUG_LOG) cout<<"err: wrong TEST_VECTOR_ID"<<endl;
     }
    
     
@@ -76,7 +79,7 @@ int main(){
     
     
     for (int i=0; i<DURATION_SIZE; i++) {                    //for duration
-        cout<<"$$$$$$$$$$$$$$$$$ "<<i<<endl;
+        if (DEBUG_LOG) cout<<"$$$$$$$$$$$$$$$$$ "<<i<<endl;
         
         //empty buffer size
         num_task = obj->buffer_empty_slot();
@@ -102,14 +105,14 @@ int main(){
         }
         
         //CPU input to Bbuffer
-        cout<<"number of task to input to buffer: "<<num_task<<endl;
+        if (DEBUG_LOG) cout<<"number of task to input to buffer: "<<num_task<<endl;
         obj->buffer_input(input_arr, num_task);
         //int cost_dp = obj->drop_cost(obj->num_drop);
         //cout<<"cost from dropped jobs: "<<cost_dp<<endl;
         
         //check ready number of GPUs
         int ready_ctr=controller->parse(gpus);
-        cout<<"number of ready GPUs: "<<ready_ctr<<endl;
+        if (DEBUG_LOG) cout<<"number of ready GPUs: "<<ready_ctr<<endl;
 
         //buffer output array for GPUs
         double *output_arr = obj->buffer_output(ready_ctr);        
@@ -119,7 +122,7 @@ int main(){
         map<int,int>::iterator iter_contr = controller->GPU_assign.begin();
 
         for (int ctr=0; ctr<16; ctr++) {
-            cout<<"gpu_id: "<< ctr <<" idle: "<< gpus[ctr]->f_idle<<" ready: "<<gpus[ctr]->f_ready<<" hot: "<<gpus[ctr]->hot<<" avg: "<<gpus[ctr]->avg<<endl;
+            if (DEBUG_LOG) cout<<"gpu_id: "<< ctr <<" idle: "<< gpus[ctr]->f_idle<<" ready: "<<gpus[ctr]->f_ready<<" hot: "<<gpus[ctr]->hot<<" avg: "<<gpus[ctr]->avg<<endl;
 
         }
         
@@ -129,19 +132,31 @@ int main(){
             dropped_cycle_cnt++;
             dropped_cycle_cost += cost_dp;
         }
-        cout<<"cost from dropped jobs: "<<cost_dp<<endl;
+        if (DEBUG_LOG) cout<<"cost from dropped jobs: "<<cost_dp<<endl;
         //cost from buffer toggling
         int cost_tg = controller->sum_per_iter();
-        cout<<"cost of toggling buffer ="<<cost_tg<<endl;
+        if (DEBUG_LOG) cout<<"cost of toggling buffer ="<<cost_tg<<endl;
         //sum of cost
         sum_cost+=cost_dp+cost_tg;
-        cout<<"sum of cost = "<<sum_cost<<endl;
+        if (DEBUG_LOG) cout<<"sum of cost = "<<sum_cost<<endl;
         
     }
-    cout<<"Dropped Cycle: "<< dropped_cycle_cnt<<endl;
-    cout<<"Dropped Cost: "<< dropped_cycle_cost<<endl;
-
+    if (DEBUG_LOG) cout<<"Dropped Cycle: "<< dropped_cycle_cnt<<endl;
+    if (DEBUG_LOG) cout<<"Dropped Cost: "<< dropped_cycle_cost<<endl;
     
+    //cout << TEST_VECTOR_ID_NAMES[TEST_VECTOR_ID] << ", "<<DURATION_SIZE<<", dropped_cycles: "<<dropped_cycle_cnt << ", dropped_cost: "<< dropped_cycle_cost << ", total cost: "<<sum_cost<<endl;
+    cout << TEST_VECTOR_ID_NAMES[TEST_VECTOR_ID] << ","<<DURATION_SIZE<<","<<dropped_cycle_cnt << ","<< dropped_cycle_cost << ","<<sum_cost<<endl;
+
     return 0;
  
+}
+
+int main() {
+    cout<<"data_type,duration_cnt,dropped_cycles,dropped_cost,totoal_cost"<<endl;
+    for (int data_id = 0; data_id<4; data_id++) {
+        for (int data_size=1000; data_size<=20*1000; data_size+=1000) {
+            testCase(data_id, data_size);
+        }
+    }
+
 }
