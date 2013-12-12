@@ -15,6 +15,7 @@ public:
     int hot,k,counter,f_idle,f_ready;//time;
     double array[10];
     double avg =0;
+    double heat=0;
     
     /*initialization*/
     GPU(){
@@ -35,8 +36,15 @@ public:
         cout<<"in update"<<endl;
         double sum=0;
         int ctr = counter%10;
+        cout<<"ctr ----------"<<ctr<<endl;
         avg =0;
+        heat=0;
         array[ctr] = time;
+        for (int n=0; n<=ctr; n++) {
+            heat+=array[n];
+        }
+        
+        heat=(double)heat/(ctr+1);
         
         if(counter>=9)
         {

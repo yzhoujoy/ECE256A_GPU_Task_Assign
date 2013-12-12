@@ -26,7 +26,7 @@ public:
     int ready_ctr,sum_buf;
     
     static bool comparison_pair( pair<int, double> & m1,  pair<int, double> & m2) {
-        return m1.second < m2.second;
+        return m1.second > m2.second;
     }
     
     /*initialization*/
@@ -62,13 +62,13 @@ public:
     }
     
     vector<pair<int, double>> gpu_sort(GPU *gpu_16[]){
-        vector<pair<int, double>> GPU_pair_avg;
+        vector<pair<int, double>> GPU_pair_heat;
         for (int i=0; i<8; i++) {
-            GPU_pair_avg.push_back(make_pair(i, gpu_16[2*i]->avg + gpu_16[2*i+1]->avg));
-            cout<<"pair number "<< GPU_pair_avg[i].first<<" avg value = "<< GPU_pair_avg[i].second<<endl;
+            GPU_pair_heat.push_back(make_pair(i, gpu_16[2*i]->heat + gpu_16[2*i+1]->heat));
+            cout<<"pair number "<< GPU_pair_heat[i].first<<" heat value = "<< GPU_pair_heat[i].second<<endl;
         }
-        sort(GPU_pair_avg.begin(), GPU_pair_avg.end(), comparison_pair);
-        return GPU_pair_avg;
+        sort(GPU_pair_heat.begin(), GPU_pair_heat.end(), comparison_pair);
+        return GPU_pair_heat;
     }
     
     

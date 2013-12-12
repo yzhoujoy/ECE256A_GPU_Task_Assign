@@ -25,7 +25,11 @@ public:
         int num_task=0;
         num_task=20-(int)tasks.size();         //number of empty items in buffer
         if (num_task<10) num_drop=10-num_task; 
-        else num_task=10;
+        else {
+            num_task=10;
+            num_drop=0;
+        
+        }
         return num_task;                       //number of task can be store into buffer
     }
     
