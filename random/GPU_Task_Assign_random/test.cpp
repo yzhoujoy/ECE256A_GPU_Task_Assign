@@ -14,8 +14,8 @@
 #include <map>
 using namespace std;
 
-const int DURATION_SIZE=20000;
-const int TEST_VECTOR_ID=1;
+const int DURATION_SIZE=20;
+const int TEST_VECTOR_ID=0;
 // 0: all 1
 // 1: random
 // 2: all 0.75

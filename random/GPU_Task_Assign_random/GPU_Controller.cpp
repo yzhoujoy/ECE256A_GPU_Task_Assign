@@ -10,6 +10,9 @@
 #include "GPU.h"
 #include "GPU.cpp"
 #include <map>
+#include <vector>
+#include <algorithm>
+#include <set>
 using namespace std;
 
 class GPU_Controller{
@@ -24,8 +27,27 @@ public:
         ready_ctr=0;         //# of GPUs, which are ready for accepting task
         sum_buf=0;           //# of clock toggling
     }
-    /*scan all GPUs to mantain map<int, int> for GPU status*/
+    
+    /*scan all GPUs */
     int parse(GPU *gpu_16[]){
+        ready_ctr=0;
+        for (int c1=0; c1<16; c1++) {
+            GPU_map[c1]=1;     //busy
+            if (gpu_16[c1]->f_ready==1) {
+                cout<<c1<<" : ready"<<endl;
+                ready_ctr++;
+                GPU_map[c1]=0; //ready
+            }else{
+                cout<<c1<<": idle"<<endl;
+                gpu_16[c1]->passive_idle();
+            }
+            
+        }
+        return ready_ctr;            //inform to buffer how many tasks should be sent
+    }
+    
+    /*scan all GPUs to mantain map<int, int> for GPU status*/
+    /*int parse_bl(GPU *gpu_16[]){
         ready_ctr=0;
         for (int c1=0; c1<16; c1+=2) {
             int c2 = c1+1;
@@ -52,10 +74,10 @@ public:
             
         }
         return ready_ctr;            //inform to buffer how many tasks should be sent
-    }
+    }*/
     
     /*scan all GPUs to mantain map<int, int> for GPU status*/
-    int parse_old(GPU *gpu_16[]){
+    /*int parse_old(GPU *gpu_16[]){
         ready_ctr=0;
         for (int counter=0; counter<16; counter++) {
             if(gpu_16[counter]->f_ready==1){
@@ -82,13 +104,38 @@ public:
                 
         }
         return ready_ctr;            //inform to buffer how many tasks should be sent
-    }
-    
-    
-    
+    }*/
     
     /*assign task to GPUs*/
     void assign_task(GPU *gpu_16[],double task[], int num_task){
+        vector<int> aval_gpu_ids;
+        for (int n=0; n<16; n++) {
+            if (GPU_map[n]==0) {
+                aval_gpu_ids.push_back(n);      //all free GPUs ids
+            }
+        }
+        random_shuffle(aval_gpu_ids.begin(), aval_gpu_ids.end());
+        set<int> used_gpu_id_set;
+        for (int i=0;i<num_task && i<aval_gpu_ids.size();i++) {
+            gpu_16[aval_gpu_ids[i]]->update(task[i]);
+            used_gpu_id_set.insert(aval_gpu_ids[i]);
+            GPU_assign[aval_gpu_ids[i]]=1;
+        }
+        for (int i=0;i<16;i++) {
+            if (!used_gpu_id_set.count(i)) { // i not in this set
+                if (GPU_map[i]==0) {
+                    gpu_16[i]->update(0.0);
+                    
+                }
+                GPU_assign[i]=0;
+            }
+        }
+        
+    }
+    
+    
+    /*assign task to GPUs*/
+    /*void assign_task_bl(GPU *gpu_16[],double task[], int num_task){
         int counter =0;
         int ctr_temp=0;    //recode number of tasks assigned
         map<int,int>::iterator iter_assign = GPU_assign.begin();
@@ -122,7 +169,7 @@ public:
             counter++;
         }
         
-    }
+    }*/
     
      int sum_per_iter(){
         int num_tog_buf=11;
