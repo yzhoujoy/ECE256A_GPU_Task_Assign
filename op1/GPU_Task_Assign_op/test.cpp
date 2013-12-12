@@ -50,7 +50,7 @@ int main(){
                 num = rand()%4;
                 //cout<<"random number is "<<num<<endl;
                 task_arr[i] = time_arr[num];
-                cout<<"task array !!!!!"<<i<<"   "<<task_arr[i]<<endl;
+                //cout<<"task array !!!!!"<<i<<"   "<<task_arr[i]<<endl;
             }
             break;
         case 2: // all 0.75
@@ -72,7 +72,8 @@ int main(){
     int num_task=0;
     double *input_arr=NULL;
     
-    
+    int dropped_cycle_cnt = 0;
+    int dropped_cycle_cost = 0;
     for (int i=0; i<DURATION_SIZE; i++) {                    //for duration
         cout<<"$$$$$$$$$$$$$$$$$ "<<i<<endl;
         
@@ -122,6 +123,10 @@ int main(){
         //cost from dropped tasks
         int cost_dp = obj->drop_cost(obj->num_drop);
         cout<<"cost from dropped jobs: "<<cost_dp<<endl;
+        if (cost_dp>0) {
+            dropped_cycle_cnt++;
+            dropped_cycle_cost += cost_dp;
+        }
         //cost from buffer toggling
         int cost_tg = controller->sum_per_iter();
         cout<<"cost from toggling buffer: "<<cost_tg<<endl;
@@ -131,7 +136,8 @@ int main(){
         
     }
     
-
+    cout<<"Dropped Cycles: "<<dropped_cycle_cnt<<endl;
+    cout<<"Dropped Cost: "<<dropped_cycle_cost<<endl;
     
     return 0;
  

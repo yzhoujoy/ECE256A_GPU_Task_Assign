@@ -60,6 +60,7 @@ public:
         }
         
         sort(output_arr,output_arr+out_num);
+        reverse(output_arr, output_arr+out_num);
         
         cout<<"size of output array = "<< out_num<<endl;
         return output_arr;
