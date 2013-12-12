@@ -22,6 +22,7 @@ const int DURATION_SIZE = 20000;
 // 3: all 0.5
 
 int main(){
+    srand(999);
     int sum_cost=0;
     GPU *gpus[16];
     for (int i=0; i<16; i++) {
@@ -44,7 +45,7 @@ int main(){
             time_arr[1]=0.5;
             time_arr[2]=0.75;
             time_arr[3]=1;
-            for(int i=0;i<30000;i++)
+            for(int i=0;i<DURATION_SIZE*10;i++)
             {
                 num = rand()%4;
                 //cout<<"random number is "<<num<<endl;
