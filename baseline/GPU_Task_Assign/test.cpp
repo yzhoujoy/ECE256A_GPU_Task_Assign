@@ -14,7 +14,7 @@
 #include <map>
 using namespace std;
 
-const int DURATION_SIZE=60;
+const int DURATION_SIZE=20000;
 const int TEST_VECTOR_ID=0;
 // 0: all 1
 // 1: random
@@ -95,7 +95,7 @@ int main(){
                 task_temp[ctr_temp2]=task_arr[n];
                 ctr_temp2++;
             }
-            task_counter+=num_task;
+            task_counter+=10;
             input_arr=task_temp;
         }
         
@@ -117,7 +117,7 @@ int main(){
         map<int,int>::iterator iter_contr = controller->GPU_assign.begin();
 
         for (int ctr=0; ctr<16; ctr++) {
-            cout<<"gpu id = "<< ctr << " idle =" << gpus[ctr]->f_idle<< " ready=" << gpus[ctr]->f_ready<<" hot ="<<gpus[ctr]->hot<<endl;
+            cout<<"gpu_id: "<< ctr <<" idle: "<< gpus[ctr]->f_idle<<" ready: "<<gpus[ctr]->f_ready<<" hot: "<<gpus[ctr]->hot<<" avg: "<<gpus[ctr]->avg<<endl;
 
         }
         

@@ -14,6 +14,7 @@ class GPU {
 public:
     int hot,k,counter,f_idle,f_ready;//time;
     double array[10];
+    double avg =0;
     
     /*initialization*/
     GPU(){
@@ -34,7 +35,7 @@ public:
         cout<<"in update"<<endl;
         double sum=0;
         int ctr = counter%10;
-        double avg =0;
+        avg =0;
         array[ctr] = time;
 
         if(counter>=9)
