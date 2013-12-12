@@ -153,7 +153,7 @@ int testCase(int TEST_VECTOR_ID, int DURATION_SIZE) {
 }
 
 int main() {
-    testCase(3, 200);
+    testCase(0, 200);
     return 0;
     cout<<"data_type,duration_cnt,dropped_cycles,dropped_cost,totoal_cost"<<endl;
     for (int data_id = 0; data_id<4; data_id++) {

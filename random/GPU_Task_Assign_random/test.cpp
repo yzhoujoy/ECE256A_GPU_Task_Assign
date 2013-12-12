@@ -17,6 +17,8 @@ using namespace std;
 
 //const int DURATION_SIZE=20;
 //const int TEST_VECTOR_ID=1;
+
+//const bool DEBUG_LOG = false;
 const bool DEBUG_LOG = true;
 // 0: all 1
 // 1: random
@@ -121,7 +123,7 @@ int testCase(int TEST_VECTOR_ID, int DURATION_SIZE) {
         controller->assign_task(gpus, output_arr,obj->out_num);
         
         for (int ctr=0; ctr<16; ctr++) {
-            if (DEBUG_LOG) cout<<"gpu_id: "<< ctr <<" idle: "<< gpus[ctr]->f_idle<<" ready: "<<gpus[ctr]->f_ready<<" hot: "<<gpus[ctr]->hot<<" avg: "<<gpus[ctr]->avg<<endl;
+            if (DEBUG_LOG) cout<<"gpu_id: "<< ctr <<" counter: "<<gpus[ctr]->counter<<" idle: "<< gpus[ctr]->f_idle<<" ready: "<<gpus[ctr]->f_ready<<" hot: "<<gpus[ctr]->hot<<" avg: "<<gpus[ctr]->avg<<" heat: "<<gpus[ctr]->getHeat()<<endl;
             
         }
         
@@ -130,8 +132,10 @@ int testCase(int TEST_VECTOR_ID, int DURATION_SIZE) {
         if (cost_dp>0) {
             dropped_cycle_cnt++;
             dropped_cycle_cost += cost_dp;
-            if (i>1000) cout<<"DROP HAPPENED AT I > 1000: "<<i<<endl;
-            else cout<<"SMALL DROP HAPPENED AT I <=1000: "<<i<<endl;
+            if (DEBUG_LOG) {
+                if (i>1000) cout<<"DROP HAPPENED AT I > 1000: "<<i<<endl;
+                else cout<<"SMALL DROP HAPPENED AT I <=1000: "<<i<<endl;
+            }
         }
         if (DEBUG_LOG) cout<<"cost from dropped jobs: "<<cost_dp<<endl;
         //cost from buffer toggling
@@ -154,14 +158,14 @@ int testCase(int TEST_VECTOR_ID, int DURATION_SIZE) {
 
 int main() {
     // debug
-    testCase(0, 1000);
+    testCase(0, 100);
     return 0;
     // debug end
     
     srand(999);
     cout<<"data_type,duration_cnt,dropped_cycles,dropped_cost,totoal_cost"<<endl;
     for (int data_id = 0; data_id<4; data_id++) {
-        for (int data_size=1000; data_size<=20*1000; data_size+=1000) {
+        for (int data_size=10000; data_size<=10*10000; data_size+=10000) {
             testCase(data_id, data_size);
         }
     }

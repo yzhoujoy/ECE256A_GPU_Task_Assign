@@ -18,6 +18,7 @@ using namespace std;
 class GPU_Controller{
 
 public:
+    //const bool DEBUG_LOG = false;
     const bool DEBUG_LOG = true;
     map<int,int> GPU_map;     //map<GPU_id,flag> table for GPU status
     map<int,int> GPU_assign;  //map<GPU_id,task> talbe for GPU assignment
@@ -117,11 +118,25 @@ public:
         }
         random_shuffle(aval_gpu_ids.begin(), aval_gpu_ids.end());
         set<int> used_gpu_id_set;
+        if (DEBUG_LOG){
+            cout<<"used_gpu_ids:";
+            vector<int> ids_tmp;
+            for (int i=0;i<num_task && i<aval_gpu_ids.size();i++) {
+                ids_tmp.push_back(aval_gpu_ids[i]);
+            }
+            sort(ids_tmp.begin(), ids_tmp.end());
+            for (int i=0;i<ids_tmp.size();i++) {
+                cout<<" "<<ids_tmp[i];
+            }
+            cout<<endl;
+        }
         for (int i=0;i<num_task && i<aval_gpu_ids.size();i++) {
             gpu_16[aval_gpu_ids[i]]->update(task[i]);
+            cout<<"update gpu_id: "<<aval_gpu_ids[i]<<endl;
             used_gpu_id_set.insert(aval_gpu_ids[i]);
             GPU_assign[aval_gpu_ids[i]]=1;
         }
+        if (DEBUG_LOG) cout<<endl;
         for (int i=0;i<16;i++) {
             if (!used_gpu_id_set.count(i)) { // i not in this set
                 if (GPU_map[i]==0) {
