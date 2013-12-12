@@ -15,7 +15,7 @@
 using namespace std;
 
 const int DURATION_SIZE=20000;
-const int TEST_VECTOR_ID=0;
+const int TEST_VECTOR_ID=1;
 // 0: all 1
 // 1: random
 // 2: all 0.75
@@ -32,6 +32,8 @@ int main(){
     double task_temp[10];
     double task_arr [DURATION_SIZE*10];
     int task_counter=0;
+    int dropped_cycle_cnt=0;
+    int dropped_cycle_cost=0;
     
     switch (TEST_VECTOR_ID) {
         case 0:// all 1's
@@ -123,6 +125,10 @@ int main(){
         
         //cost from dropped tasks
         int cost_dp = obj->drop_cost(obj->num_drop);
+        if (cost_dp>0) {
+            dropped_cycle_cnt++;
+            dropped_cycle_cost += cost_dp;
+        }
         cout<<"cost from dropped jobs: "<<cost_dp<<endl;
         //cost from buffer toggling
         int cost_tg = controller->sum_per_iter();
@@ -132,7 +138,8 @@ int main(){
         cout<<"sum of cost = "<<sum_cost<<endl;
         
     }
-    
+    cout<<"Dropped Cycle: "<< dropped_cycle_cnt<<endl;
+    cout<<"Dropped Cost: "<< dropped_cycle_cost<<endl;
 
     
     return 0;
