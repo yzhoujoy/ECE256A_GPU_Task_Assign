@@ -17,7 +17,8 @@ using namespace std;
 
 //const int DURATION_SIZE=20;
 //const int TEST_VECTOR_ID=1;
-const bool DEBUG_LOG = false;
+//const bool DEBUG_LOG = false;
+const bool DEBUG_LOG = true;
 // 0: all 1
 // 1: random
 // 2: all 0.75
@@ -65,7 +66,7 @@ int testCase(int TEST_VECTOR_ID, int DURATION_SIZE) {
             
         case 3:// all 0.5's
             for (int n=0; n<DURATION_SIZE*10; n++) {
-                task_arr[n]=0.75;
+                task_arr[n]=0.5;
             }
             break;
             
@@ -152,6 +153,8 @@ int testCase(int TEST_VECTOR_ID, int DURATION_SIZE) {
 }
 
 int main() {
+    testCase(3, 200);
+    return 0;
     cout<<"data_type,duration_cnt,dropped_cycles,dropped_cost,totoal_cost"<<endl;
     for (int data_id = 0; data_id<4; data_id++) {
         for (int data_size=1000; data_size<=20*1000; data_size+=1000) {

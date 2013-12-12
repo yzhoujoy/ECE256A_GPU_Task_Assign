@@ -18,6 +18,7 @@ using namespace std;
 class GPU_Controller{
 
 public:
+    const bool DEBUG_LOG = true;
     map<int,int> GPU_map;     //map<GPU_id,flag> table for GPU status
     map<int,int> GPU_assign;  //map<GPU_id,task> talbe for GPU assignment
     int ready_ctr,sum_buf;
@@ -34,11 +35,11 @@ public:
         for (int c1=0; c1<16; c1++) {
             GPU_map[c1]=1;     //busy
             if (gpu_16[c1]->f_ready==1) {
-                cout<<c1<<" : ready"<<endl;
+                if (DEBUG_LOG) cout<<c1<<" : ready"<<endl;
                 ready_ctr++;
                 GPU_map[c1]=0; //ready
             }else{
-                cout<<c1<<": idle"<<endl;
+                if (DEBUG_LOG) cout<<c1<<": idle"<<endl;
                 gpu_16[c1]->passive_idle();
             }
             
@@ -180,7 +181,7 @@ public:
                 r++;
             }
         }
-        cout<<"number of +3"<<r<<endl;
+        if (DEBUG_LOG) cout<<"number of +3"<<r<<endl;
         sum_buf = num_tog_buf;
         return sum_buf;
     }

@@ -13,7 +13,8 @@ using namespace std;
 class GPU { 
 
 public:
-    const bool DEBUG_LOG = false;
+    //const bool DEBUG_LOG = false;
+    const bool DEBUG_LOG = true;
     int hot,k,counter,f_idle,f_ready;//time;
     double array[10];
     double avg =0;
