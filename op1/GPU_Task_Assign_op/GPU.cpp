@@ -12,10 +12,10 @@ using namespace std;
 class GPU {
     
 public:
-    int hot,k,counter,f_idle,f_ready;//time;
+    int hot,k,counter,f_idle,f_ready;
     double array[10];
-    double avg =0;
-    double heat=0;
+    double avg =0;                    //test thermal constrain violation
+    double heat=0;                    //used in sort GPUs
     
     /*initialization*/
     GPU(){
@@ -24,11 +24,8 @@ public:
         counter=0;
         f_idle=0;
         f_ready=1;
-        //time=0;
-        for(int i=0; i<10;i++)
-        {
+        for(int i=0; i<10;i++)        //task array initialization
             array[i] = 0.0;
-        }
     }
     
     /*update task array and check thermal constrain*/
@@ -36,15 +33,16 @@ public:
         cout<<"in update"<<endl;
         double sum=0;
         int ctr = counter%10;
-        cout<<"ctr ----------"<<ctr<<endl;
         avg =0;
         heat=0;
-        array[ctr] = time;
-        for (int n=0; n<=ctr; n++) {
+        array[ctr] = time;       //store task into array
+        
+        //caculate for heat
+        for (int n=0; n<10; n++){
             heat+=array[n];
         }
+        heat=(double)heat/10;
         
-        heat=(double)heat/(ctr+1);
         
         if(counter>=9)
         {
@@ -57,6 +55,7 @@ public:
         }
         avg = sum/10;
         counter++;
+        
         cout<<"array index in GPU = "<<counter<<endl;
         if(avg > 0.5) {
             passive_idle();
@@ -89,6 +88,9 @@ public:
         f_ready=0;     //not ready to work
         hot=1;
         k-=2;
+        array[counter++]=0;
+        array[counter++]=0;
+        array[counter++]=0;
         cout<<"k_ = "<<k<<endl;
     }
     

@@ -14,7 +14,7 @@
 #include <map>
 using namespace std;
 
-const int TEST_VECTOR_ID = 1;
+const int TEST_VECTOR_ID = 0;
 const int DURATION_SIZE = 20000;
 // 0: all 1,
 // 1: random
@@ -66,10 +66,6 @@ int main(){
             cout<<"error: wrong TEST_VECTOR_ID"<<endl;
     }
     
-
-
-
-
     
     Buffer *obj = new Buffer();
     int num_task=0;
@@ -81,6 +77,7 @@ int main(){
         
         //empty buffer size
         num_task = obj->buffer_empty_slot();
+        cout<<"# of empty slot in buffer before: "<< num_task<<endl;
         
         //assign CPU output task array
         if (num_task>=10) {
@@ -98,30 +95,27 @@ int main(){
                 task_temp[ctr_temp2]=task_arr[n];
                 ctr_temp2++;
             }
-            task_counter+=num_task;
+            task_counter+=10;  // +10 anyway
             input_arr=task_temp;
         }
         
         //CPU input to Bbuffer
         cout<<"number of task to input to buffer: "<<num_task<<endl;
         obj->buffer_input(input_arr, num_task);
-        //int cost_dp = obj->drop_cost(obj->num_drop);
-        //cout<<"cost from dropped jobs: "<<cost_dp<<endl;
+
         
         //check ready number of GPUs
         int ready_ctr=controller->parse(gpus);
-        cout<<"number of ready GPUs: "<<ready_ctr<<endl;
+        cout<<"number of ready GPUs in this cycle: "<<ready_ctr<<endl;
 
         //buffer output array for GPUs
         double *output_arr = obj->buffer_output(ready_ctr);        
         
         //assign tasks to GPUs
         controller->assign_task(gpus, output_arr,obj->out_num);
-        map<int,int>::iterator iter_contr = controller->GPU_assign.begin();
-
+        
         for (int ctr=0; ctr<16; ctr++) {
-            cout<<"gpu id = "<< ctr << " idle =" << gpus[ctr]->f_idle<< " ready=" << gpus[ctr]->f_ready<<" hot ="<<gpus[ctr]->hot<<endl;
-
+            cout<<"after: "<<"gpu_id = "<< ctr << " idle: " << gpus[ctr]->f_idle<< " ready: "<< gpus[ctr]->f_ready<<" hot: "<<gpus[ctr]->hot<<" avg: "<< gpus[ctr]->avg<<" heat: "<<gpus[ctr]->heat<<endl;
         }
         
         //cost from dropped tasks
@@ -129,10 +123,10 @@ int main(){
         cout<<"cost from dropped jobs: "<<cost_dp<<endl;
         //cost from buffer toggling
         int cost_tg = controller->sum_per_iter();
-        cout<<"cost of toggling buffer ="<<cost_tg<<endl;
+        cout<<"cost from toggling buffer: "<<cost_tg<<endl;
         //sum of cost
         sum_cost+=cost_dp+cost_tg;
-        cout<<"sum of cost = "<<sum_cost<<endl;
+        cout<<"sum of cost: "<<sum_cost<<endl;
         
     }
     

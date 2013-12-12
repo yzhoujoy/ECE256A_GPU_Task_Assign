@@ -14,14 +14,15 @@
 #include <map>
 using namespace std;
 
-const int DURATION_SIZE=20000;
-const int TEST_VECTOR_ID=1;
+const int DURATION_SIZE=60;
+const int TEST_VECTOR_ID=0;
 // 0: all 1
 // 1: random
 // 2: all 0.75
 // 3: all 0.5
 
 int main(){
+    srand(999);
     int sum_cost=0;
     GPU *gpus[16];
     for (int i=0; i<16; i++) {

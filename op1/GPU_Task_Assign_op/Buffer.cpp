@@ -14,7 +14,6 @@ using namespace std;
 class Buffer{
 public:
     int task_ctr=0;        
-    int sum=0;
     int out_num;                               //number of tasks should be sent
     map<int, double> tasks;
     int num_drop;
@@ -33,7 +32,7 @@ public:
     }
     
     /*store tasks from CPU to buffer*/
-    void buffer_input(double *task, int size){
+    void buffer_input(double task[], int size){
         for (int n=0; n<size ; n++) {
             tasks[task_ctr]=*task;
             task++;
@@ -42,14 +41,14 @@ public:
     }
     
     /*caculate size of output array*/
-    double * buffer_output(int num_output){
+    double * buffer_output(int aval_gpu_cnt){
         out_num=0;               
         cout<<"used buffer size = "<<(int)tasks.size()<<endl;
-        cout<<"number of ready GPUs = "<< num_output<<endl;
+        cout<<"number of ready GPUs = "<< aval_gpu_cnt<<endl;
         
         //assign size of output array
-        if (tasks.size()<num_output) out_num=(int)tasks.size();
-        else out_num=num_output;
+        if (tasks.size()<aval_gpu_cnt) out_num=(int)tasks.size();
+        else out_num=aval_gpu_cnt;
         
         double *output_pt=output_arr;
         map<int, double>::iterator iter;
@@ -67,7 +66,7 @@ public:
     }
     
     int drop_cost(int num_of_drop){
-        sum = num_of_drop*5;
+        int sum = num_of_drop*5;
         return sum;
     }
     
