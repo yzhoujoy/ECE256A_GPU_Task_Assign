@@ -10,6 +10,8 @@
 #include "GPU.h"
 #include "GPU.cpp"
 #include <map>
+#include <vector>
+#include <algorithm>
 using namespace std;
 
 class GPU_Controller{
@@ -17,10 +19,14 @@ class GPU_Controller{
 public:
     const bool DEBUG_LOG = false;
 //    const bool DEBUG_LOG = true;
+//    const bool GPU_SORT_COOL_FIRST = true;
+    const bool GPU_SORT_COOL_FIRST = false;
     map<int,int> GPU_map;     //map<GPU_id,flag> table for GPU status
     map<int,int> GPU_assign;  //map<GPU_id,task> talbe for GPU assignment
     int ready_ctr,sum_buf;
-    
+    static bool comparison_pair( pair<int, double> & m1,  pair<int, double> & m2) {
+        return m1.second < m2.second;
+    }
     /*initialization*/
     GPU_Controller(){
         ready_ctr=0;         //# of GPUs, which are ready for accepting task
@@ -105,15 +111,60 @@ public:
     }*/
     
     
+    vector<pair<int, double>> gpu_sort(GPU *gpu_16[]){
+        vector<pair<int, double>> GPU_pair_heat;
+        for (int i=0; i<8; i++) {
+            GPU_pair_heat.push_back(make_pair(i, gpu_16[2*i]->getHeat() + gpu_16[2*i+1]->getHeat()));
+            if (DEBUG_LOG) cout<<"pair number: "<< GPU_pair_heat[i].first<<" heat value: "<< GPU_pair_heat[i].second<<endl;
+        }
+        sort(GPU_pair_heat.begin(), GPU_pair_heat.end(), comparison_pair);
+        if (!GPU_SORT_COOL_FIRST) {
+            reverse(GPU_pair_heat.begin(), GPU_pair_heat.end());
+        }
+        return GPU_pair_heat;
+    }
     
+    void assign_task(GPU *gpu_16[],double task[], int num_task){
+        vector<pair<int, double>> GPU_pair_heat=gpu_sort(gpu_16);
+        int task_cnt=0;
+        for (int i=0; i<8; i++) {
+            int pair_id= GPU_pair_heat[i].first;
+            int gpu1_id=pair_id*2;
+            int gpu2_id=pair_id*2+1;
+            GPU *gpu1=gpu_16[pair_id*2];
+            GPU *gpu2=gpu_16[pair_id*2+1];
+            
+            if (task_cnt<num_task-1) {
+                if (GPU_map[gpu1_id]==0 && GPU_map[gpu2_id]==0) {
+                    gpu1->update(task[task_cnt]);
+                    gpu2->update(task[task_cnt+1]);
+                    GPU_assign[pair_id*2]=1;
+                    GPU_assign[pair_id*2+1]=1;
+                    task_cnt+=2;
+                }else{
+                    gpu1->update(0.0);
+                    gpu2->update(0.0);
+                    GPU_assign[pair_id*2]=0;
+                    GPU_assign[pair_id*2+1]=0;
+                }
+            }else{
+                gpu1->update(0.0);
+                gpu2->update(0.0);
+                GPU_assign[pair_id*2]=0;
+                GPU_assign[pair_id*2+1]=0;
+            }
+            
+        }
+        
+    }
     
     /*assign task to GPUs*/
-    void assign_task(GPU *gpu_16[],double task[], int num_task){
+    void assign_task_old(GPU *gpu_16[],double task[], int num_task){
         //int counter =0;
         int ctr_temp=0;    //recode number of tasks assigned
-        map<int,int>::iterator iter_assign = GPU_assign.begin();
+        map<int,int>::iterator iter_assign;
         //clean all GPU assignments in last dutation
-        for (iter_assign; iter_assign !=GPU_assign.end(); iter_assign++) {
+        for (iter_assign = GPU_assign.begin(); iter_assign !=GPU_assign.end(); iter_assign++) {
             iter_assign->second=0;
         }
         
