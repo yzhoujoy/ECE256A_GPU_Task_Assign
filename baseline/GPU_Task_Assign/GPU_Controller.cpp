@@ -15,8 +15,8 @@ using namespace std;
 class GPU_Controller{
 
 public:
-    const bool DEBUG_LOG = false;
-//    const bool DEBUG_LOG = true;
+//    const bool DEBUG_LOG = false;
+    const bool DEBUG_LOG = true;
     map<int,int> GPU_map;     //map<GPU_id,flag> table for GPU status
     map<int,int> GPU_assign;  //map<GPU_id,task> talbe for GPU assignment
     int ready_ctr,sum_buf;
@@ -118,8 +118,6 @@ public:
         }
         
         map<int, int>::iterator iter_map = GPU_map.begin();
-        
-
         for (int i=0; i<16; i++) {
             if (ctr_temp<num_task) {
                 if(iter_map->second==0){          //available
@@ -147,7 +145,14 @@ public:
                 brother_gpu->passive_idle();
             }
         }
-        
+        // output used gpu ids
+        if (DEBUG_LOG) {
+            cout<<"used gpu ids:";
+            for (int i=0;i<16;i++) {
+                if (GPU_assign[i]) cout<<" "<<i;
+            }
+            cout<<endl;
+        }
     }
     
      int sum_per_iter(){

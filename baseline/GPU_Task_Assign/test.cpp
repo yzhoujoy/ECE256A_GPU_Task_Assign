@@ -18,8 +18,8 @@ using namespace std;
 //const int DURATION_SIZE=20;
 //const int TEST_VECTOR_ID=1;
 
-const bool DEBUG_LOG = false;
 //const bool DEBUG_LOG = false;
+const bool DEBUG_LOG = true;
 // 0: all 1
 // 1: random
 // 2: all 0.75
@@ -160,8 +160,8 @@ int testCase(int TEST_VECTOR_ID, int DURATION_SIZE, int DATA_SEGMENT_SIZE) {
 
 int main() {
     // debug
-    //    testCase(0, 50, 1);
-    //    return 0;
+        testCase(3, 50, 100000);
+        return 0;
     // debug end
     
     srand(999);
