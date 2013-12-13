@@ -26,8 +26,26 @@ public:
         ready_ctr=0;         //# of GPUs, which are ready for accepting task
         sum_buf=0;           //# of clock toggling
     }
+    
     /*scan all GPUs to mantain map<int, int> for GPU status*/
     int parse(GPU *gpu_16[]){
+        ready_ctr=0;
+        for (int c1=0; c1<16; c1+=2) {
+            int c2 = c1+1;
+            GPU_map[c1]=1;      //busy
+            GPU_map[c2]=1;      //busy
+            if (gpu_16[c1]->f_ready==1 && gpu_16[c2]->f_ready==1) {
+                if (DEBUG_LOG) cout<<c1<<" : ready"<< c2<<" :ready"<<endl;
+                ready_ctr+=2;
+                GPU_map[c1]=0;  //ready
+                GPU_map[c2]=0;  //ready
+            } 
+        }
+        return ready_ctr;            //inform to buffer how many tasks should be sent
+    }
+    
+    /*scan all GPUs to mantain map<int, int> for GPU status*/
+    /*int parse_old_new(GPU *gpu_16[]){
         ready_ctr=0;
         for (int c1=0; c1<16; c1+=2) {
             int c2 = c1+1;
@@ -54,10 +72,10 @@ public:
             
         }
         return ready_ctr;            //inform to buffer how many tasks should be sent
-    }
+    }*/
     
     /*scan all GPUs to mantain map<int, int> for GPU status*/
-    int parse_old(GPU *gpu_16[]){
+    /*int parse_old(GPU *gpu_16[]){
         ready_ctr=0;
         for (int counter=0; counter<16; counter++) {
             if(gpu_16[counter]->f_ready==1){
@@ -84,14 +102,14 @@ public:
                 
         }
         return ready_ctr;            //inform to buffer how many tasks should be sent
-    }
+    }*/
     
     
     
     
     /*assign task to GPUs*/
     void assign_task(GPU *gpu_16[],double task[], int num_task){
-        int counter =0;
+        //int counter =0;
         int ctr_temp=0;    //recode number of tasks assigned
         map<int,int>::iterator iter_assign = GPU_assign.begin();
         //clean all GPU assignments in last dutation
@@ -104,24 +122,30 @@ public:
 
         for (int i=0; i<16; i++) {
             if (ctr_temp<num_task) {
-                if(iter_map->second==0){
-                    gpu_16[iter_map->first]->update(task[counter]);//update GPUs status table
-                    GPU_assign[iter_map->first]=1;                 //assign task for GPU
-                    iter_map++;
+                if(iter_map->second==0){          //available
+                    gpu_16[iter_map->first]->update(task[ctr_temp]);//update GPUs status
+                    GPU_assign[iter_map->first]=1;                  //assign task for GPU
                     ctr_temp++;
                 }else{
                     //gpu_16[iter_map->first]->update(0.0);
-                    iter_map++;
-                    GPU_assign[iter_map->first]=0;
+                    gpu_16[iter_map->first]->update(0.0);//update GPUs status
+                    GPU_assign[iter_map->first]=0;                  //not assigned task
                 }
             }else{
-                if (iter_map->second==0) {
-                    gpu_16[iter_map->first]->update(0.0);
-                }
+                gpu_16[iter_map->first]->update(0.0);
                 GPU_assign[iter_map->first]=0;
-                iter_map++;
             }
-            counter++;
+            iter_map++;
+        }
+        
+        // pair
+        for (int self_id=0; self_id<16; self_id++) {
+            int brother_id = (self_id/2 * 2 * 2 +1 ) - self_id;
+            GPU* self_gpu = gpu_16[self_id];
+            GPU* brother_gpu = gpu_16[brother_id];
+            if (self_gpu->f_idle && brother_gpu->f_ready) {
+                brother_gpu->passive_idle();
+            }
         }
         
     }

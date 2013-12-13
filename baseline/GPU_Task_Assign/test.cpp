@@ -123,7 +123,7 @@ int testCase(int TEST_VECTOR_ID, int DURATION_SIZE) {
         map<int,int>::iterator iter_contr = controller->GPU_assign.begin();
 
         for (int ctr=0; ctr<16; ctr++) {
-            if (DEBUG_LOG) cout<<"gpu_id: "<< ctr <<" idle: "<< gpus[ctr]->f_idle<<" ready: "<<gpus[ctr]->f_ready<<" hot: "<<gpus[ctr]->hot<<" avg: "<<gpus[ctr]->avg<<endl;
+            if (DEBUG_LOG) cout<<"gpu_id: "<< ctr <<" counter: "<<gpus[ctr]->counter<<" idle: "<< gpus[ctr]->f_idle<<" ready: "<<gpus[ctr]->f_ready<<" hot: "<<gpus[ctr]->hot<<" avg: "<<gpus[ctr]->avg<<" heat: "<<gpus[ctr]->getHeat()<<endl;
 
         }
         
@@ -153,7 +153,7 @@ int testCase(int TEST_VECTOR_ID, int DURATION_SIZE) {
 }
 
 int main() {
-    testCase(0, 200);
+    testCase(0, 50);
     return 0;
     cout<<"data_type,duration_cnt,dropped_cycles,dropped_cost,totoal_cost"<<endl;
     for (int data_id = 0; data_id<4; data_id++) {
