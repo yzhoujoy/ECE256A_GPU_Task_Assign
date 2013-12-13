@@ -84,7 +84,7 @@ public:
             }
             array[ctr]=task_time;
             passive_idle();
-            if(counter>=9 && getHeat()>0.499){
+            if(f_ready==1 && counter>=9 && getHeat()>0.499){
                 passive_idle();
             }
         }
