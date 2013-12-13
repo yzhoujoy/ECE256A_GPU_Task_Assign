@@ -18,8 +18,8 @@ using namespace std;
 //const int DURATION_SIZE=20;
 //const int TEST_VECTOR_ID=1;
 
-//const bool DEBUG_LOG = false;
-const bool DEBUG_LOG = true;
+const bool DEBUG_LOG = false;
+//const bool DEBUG_LOG = true;
 // 0: all 1
 // 1: random
 // 2: all 0.75
@@ -123,7 +123,7 @@ int testCase(int TEST_VECTOR_ID, int DURATION_SIZE, int DATA_SEGMENT_SIZE) {
         controller->assign_task(gpus, output_arr,obj->out_num);
         
         for (int ctr=0; ctr<16; ctr++) {
-            if (DEBUG_LOG) cout<<"gpu_id: "<< ctr <<" counter: "<<gpus[ctr]->counter<<" idle: "<< gpus[ctr]->f_idle<<" ready: "<<gpus[ctr]->f_ready<<" hot: "<<gpus[ctr]->hot<<" avg: "<<gpus[ctr]->avg<<" heat: "<<gpus[ctr]->getHeat()<<endl;
+            if (DEBUG_LOG) cout<<"gpu_id: "<< ctr <<" counter: "<<gpus[ctr]->counter<<" idle: "<< gpus[ctr]->f_idle<<" ready: "<<gpus[ctr]->f_ready<<" hot: "<<gpus[ctr]->hot<<" avg: "<<gpus[ctr]->avg<<" heat: "<<gpus[ctr]->getHeat()<<" k: "<<gpus[ctr]->k<<endl;
             
         }
         
@@ -160,8 +160,8 @@ int testCase(int TEST_VECTOR_ID, int DURATION_SIZE, int DATA_SEGMENT_SIZE) {
 
 int main() {
     // debug
-        testCase(1, 50, 1000);
-        return 0;
+//        testCase(1, 50, 1000);
+//        return 0;
     // debug end
     
     srand(999);

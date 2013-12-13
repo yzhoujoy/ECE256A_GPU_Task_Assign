@@ -12,8 +12,8 @@ using namespace std;
 class GPU {
     
 public:
-//    const bool DEBUG_LOG = false;
-    const bool DEBUG_LOG = true;
+    const bool DEBUG_LOG = false;
+//    const bool DEBUG_LOG = true;
     int hot,k,counter,f_idle,f_ready;//time;
     double array[10];
     double avg =0;
@@ -31,37 +31,6 @@ public:
         {
             array[i] = 0.0;
         }
-    }
-    
-    
-    /*update task array and check thermal constrain*/
-    void update_old(double time){
-        if (DEBUG_LOG) cout<<"in update"<<endl;
-        double sum=0;
-        int ctr = counter%10;
-        avg =0;
-        array[ctr] = time;
-        
-        if(counter>=9)
-        {
-            for(int i=0; i<10; i++)
-            {
-                sum +=array[i];
-                
-            }
-            
-        }
-        avg = sum/10;
-        counter++;
-        if (DEBUG_LOG) cout<<"array index in GPU = "<<counter<<endl;
-        if(avg > 0.5) {
-            passive_idle();
-            array[counter%10]=0;
-            array[(counter++)%10]=0;
-            array[(counter++)%10]=0;
-            
-        }
-        else ready();
     }
     
     
@@ -84,7 +53,7 @@ public:
             }
             array[ctr]=task_time;
             passive_idle();
-            if(counter>=9 && getHeat()>0.499){
+            if( f_ready==1 && counter>=9 && getHeat()>0.499){
                 passive_idle();
             }
         }
@@ -103,15 +72,6 @@ public:
             ready();
         }
     }
-    
-    /*void passive_idle_(){
-        k=3;
-        f_idle=1;      //force to idle
-        f_ready=0;     //not ready to work
-        hot=1;
-        k-=2;
-        if (DEBUG_LOG) cout<<"k_p = "<<k<<endl;
-    }*/
     
     void ready(){
         f_ready=1;     //ready to accept task
