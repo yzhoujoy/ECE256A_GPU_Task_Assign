@@ -41,7 +41,7 @@ public:
                 GPU_map[c1]=0; //ready
             }else{
                 if (DEBUG_LOG) cout<<c1<<": idle"<<endl;
-                gpu_16[c1]->passive_idle();
+                //gpu_16[c1]->passive_idle();
             }
             
         }
@@ -119,6 +119,7 @@ public:
         random_shuffle(aval_gpu_ids.begin(), aval_gpu_ids.end());
         set<int> used_gpu_id_set;
         if (DEBUG_LOG){
+            // sort and output used gpu ids
             cout<<"used_gpu_ids:";
             vector<int> ids_tmp;
             for (int i=0;i<num_task && i<aval_gpu_ids.size();i++) {
@@ -129,24 +130,28 @@ public:
                 cout<<" "<<ids_tmp[i];
             }
             cout<<endl;
+            // end sort and output used gpu ids
         }
+        int processed_gpu_cnt=0;
         for (int i=0;i<num_task && i<aval_gpu_ids.size();i++) {
             gpu_16[aval_gpu_ids[i]]->update(task[i]);
             cout<<"update gpu_id: "<<aval_gpu_ids[i]<<endl;
             used_gpu_id_set.insert(aval_gpu_ids[i]);
             GPU_assign[aval_gpu_ids[i]]=1;
+            processed_gpu_cnt++;
         }
         if (DEBUG_LOG) cout<<endl;
         for (int i=0;i<16;i++) {
             if (!used_gpu_id_set.count(i)) { // i not in this set
-                if (GPU_map[i]==0) {
-                    gpu_16[i]->update(0.0);
-                    
-                }
-                GPU_assign[i]=0;
+                gpu_16[i]->update(0.0);
+                GPU_assign[i]=0;             // not assigned
+                processed_gpu_cnt++;
             }
         }
-        
+        if (processed_gpu_cnt!=16) {
+            cout<<"err: not exactly processed 16 GPUS"<<endl;
+            exit(0);
+        }
     }
     
     

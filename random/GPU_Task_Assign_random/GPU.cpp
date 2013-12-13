@@ -35,7 +35,7 @@ public:
    
     
     /*update task array and check thermal constrain*/
-    void update(double time){
+    void update_old(double time){
         if (DEBUG_LOG) cout<<"in update"<<endl;
         double sum=0;
         int ctr = counter%10;
@@ -63,6 +63,40 @@ public:
         }
         else ready();
     }
+    
+    
+    /*update task array and check thermal constrain*/
+    void update(double task_time){
+        double sum;
+        int ctr=counter%10;    //index of array
+        if (f_ready==1) {  //ready
+            sum=0;
+            avg=0;
+            array[ctr] = task_time;
+            if(counter>=9)
+            {
+                for(int i=0; i<10; i++)
+                {
+                    sum +=array[i];
+                }
+            }
+            avg = sum/10;
+            if (DEBUG_LOG) cout<<"array index in GPU = "<<counter<<endl;
+            if(avg >= 0.5) {
+                passive_idle();
+            }else{
+                ready();
+            }
+        }else{        //idle
+            if (task_time>0.001 || task_time<-0.001) {
+                cout<<"err: task_time not 0 for idle GPU"<<endl;
+                exit(0);
+            }
+            array[ctr]=task_time;
+            passive_idle();
+        }
+        counter++;
+    }
 
     void passive_idle(){
         f_idle=1;      //force to idle
@@ -72,12 +106,7 @@ public:
         if(k>0)k--;
         else {
             k=3;
-            f_idle=0;
-            f_ready=1;
             if (DEBUG_LOG) cout<<"go to ready!!!!!!!!!!!!!!!!!!!!!!!!"<<endl;
-//            for (int i=0; i<10; i++) {
-//                array[i]=0;
-//            }
             ready();
         }
     }

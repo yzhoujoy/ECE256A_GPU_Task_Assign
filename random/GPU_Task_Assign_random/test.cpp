@@ -158,7 +158,7 @@ int testCase(int TEST_VECTOR_ID, int DURATION_SIZE) {
 
 int main() {
     // debug
-    testCase(0, 100);
+    testCase(0, 50);
     return 0;
     // debug end
     
