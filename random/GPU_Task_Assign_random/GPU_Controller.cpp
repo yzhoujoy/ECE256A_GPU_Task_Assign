@@ -18,7 +18,7 @@ using namespace std;
 class GPU_Controller{
 
 public:
-    //const bool DEBUG_LOG = false;
+//    const bool DEBUG_LOG = true;
     const bool DEBUG_LOG = false;
     map<int,int> GPU_map;     //map<GPU_id,flag> table for GPU status
     map<int,int> GPU_assign;  //map<GPU_id,task> talbe for GPU assignment

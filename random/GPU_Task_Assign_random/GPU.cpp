@@ -9,11 +9,11 @@
 #include "GPU.h"
 using namespace std;
 
-class GPU { 
-
+class GPU {
+    
 public:
-    //const bool DEBUG_LOG = false;
     const bool DEBUG_LOG = false;
+//    const bool DEBUG_LOG = true;
     int hot,k,counter,f_idle,f_ready;//time;
     double array[10];
     double avg =0;
@@ -32,7 +32,7 @@ public:
             array[i] = 0.0;
         }
     }
-   
+    
     
     /*update task array and check thermal constrain*/
     void update_old(double time){
@@ -41,7 +41,7 @@ public:
         int ctr = counter%10;
         avg =0;
         array[ctr] = time;
-
+        
         if(counter>=9)
         {
             for(int i=0; i<10; i++)
@@ -49,7 +49,7 @@ public:
                 sum +=array[i];
                 
             }
-        
+            
         }
         avg = sum/10;
         counter++;
@@ -67,24 +67,14 @@ public:
     
     /*update task array and check thermal constrain*/
     void update(double task_time){
-        double sum;
+        //double sum;
         int ctr=counter%10;    //index of array
         if (f_ready==1) {  //ready
-            sum=0;
-            avg=0;
-            array[ctr] = task_time;
-            if(counter>=9)
-            {
-                for(int i=0; i<10; i++)
-                {
-                    sum +=array[i];
-                }
-            }
-            avg = sum/10;
             if (DEBUG_LOG) cout<<"array index in GPU = "<<counter<<endl;
-            if(avg > 0.499) {
+            array[ctr] = task_time;
+            if(counter>=9 && getHeat()>0.499){
                 passive_idle();
-            }else{
+            } else {
                 ready();
             }
         }else{        //idle
@@ -94,10 +84,13 @@ public:
             }
             array[ctr]=task_time;
             passive_idle();
+            if(counter>=9 && getHeat()>0.499){
+                passive_idle();
+            }
         }
         counter++;
     }
-
+    
     void passive_idle(){
         f_idle=1;      //force to idle
         f_ready=0;     //not ready to work
@@ -111,17 +104,14 @@ public:
         }
     }
     
-    void passive_idle_(){
-        k=3;
-        f_idle=1;      //force to idle
-        f_ready=0;     //not ready to work
-        hot=1;
-        k-=2;
-        array[counter%10]=0;
-        array[(counter++)%10]=0;
-        array[(counter++)%10]=0;
-        if (DEBUG_LOG) cout<<"k_p = "<<k<<endl;
-    }
+    /*void passive_idle_(){
+     k=3;
+     f_idle=1;      //force to idle
+     f_ready=0;     //not ready to work
+     hot=1;
+     k-=2;
+     if (DEBUG_LOG) cout<<"k_p = "<<k<<endl;
+     }*/
     
     void ready(){
         f_ready=1;     //ready to accept task
@@ -133,6 +123,8 @@ public:
         for (int i=0;i<10;i++) {
             tmp_heat += array[i];
         }
-        return tmp_heat/10;
+        tmp_heat = tmp_heat/10;
+        avg = tmp_heat;
+        return tmp_heat;
     }
 };
