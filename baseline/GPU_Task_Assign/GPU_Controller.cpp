@@ -159,7 +159,7 @@ public:
                 r++;
             }
         }
-        if (DEBUG_LOG) cout<<"number of +3"<<r<<endl;
+        if (DEBUG_LOG) cout<<"number of +3: "<<r<<endl;
         sum_buf = num_tog_buf;
         return sum_buf;
     }
