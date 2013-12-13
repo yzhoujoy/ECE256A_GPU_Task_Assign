@@ -15,8 +15,8 @@ using namespace std;
 class GPU_Controller{
 
 public:
-    const bool DEBUG_LOG = false;
-//    const bool DEBUG_LOG = true;
+//    const bool DEBUG_LOG = false;
+    const bool DEBUG_LOG = true;
     map<int,int> GPU_map;     //map<GPU_id,flag> table for GPU status
     map<int,int> GPU_assign;  //map<GPU_id,task> talbe for GPU assignment
     int ready_ctr,sum_buf;
@@ -145,7 +145,11 @@ public:
             GPU* brother_gpu = gpu_16[brother_id];
             if (self_gpu->f_idle && brother_gpu->f_ready) {
                 brother_gpu->passive_idle();
+                if (DEBUG_LOG) {
+                    cout<<"MADE BRO IDLE --- self: "<<self_id<<" bro: "<<brother_id<<endl;
+                }
             }
+            
         }
         
     }
