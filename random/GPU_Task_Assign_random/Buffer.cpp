@@ -14,7 +14,7 @@ using namespace std;
 class Buffer{
 public:
     //const bool DEBUG_LOG = false;
-    const bool DEBUG_LOG = true;
+    const bool DEBUG_LOG = false;
     int task_ctr=0;        
     int sum=0;
     int out_num;                               //number of tasks should be sent

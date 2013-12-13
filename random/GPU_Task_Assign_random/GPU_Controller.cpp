@@ -19,7 +19,7 @@ class GPU_Controller{
 
 public:
     //const bool DEBUG_LOG = false;
-    const bool DEBUG_LOG = true;
+    const bool DEBUG_LOG = false;
     map<int,int> GPU_map;     //map<GPU_id,flag> table for GPU status
     map<int,int> GPU_assign;  //map<GPU_id,task> talbe for GPU assignment
     int ready_ctr,sum_buf;
@@ -135,7 +135,7 @@ public:
         int processed_gpu_cnt=0;
         for (int i=0;i<num_task && i<aval_gpu_ids.size();i++) {
             gpu_16[aval_gpu_ids[i]]->update(task[i]);
-            cout<<"update gpu_id: "<<aval_gpu_ids[i]<<endl;
+            if (DEBUG_LOG) cout<<"update gpu_id: "<<aval_gpu_ids[i]<<endl;
             used_gpu_id_set.insert(aval_gpu_ids[i]);
             GPU_assign[aval_gpu_ids[i]]=1;
             processed_gpu_cnt++;

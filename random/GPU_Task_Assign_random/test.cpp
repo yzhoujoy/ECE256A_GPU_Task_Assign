@@ -19,14 +19,14 @@ using namespace std;
 //const int TEST_VECTOR_ID=1;
 
 //const bool DEBUG_LOG = false;
-const bool DEBUG_LOG = true;
+const bool DEBUG_LOG = false;
 // 0: all 1
 // 1: random
 // 2: all 0.75
 // 3: all 0.5
 string TEST_VECTOR_ID_NAMES[] = {"all 1", "random", "all 0.75", "all 0.5"};
 //int main(){
-int testCase(int TEST_VECTOR_ID, int DURATION_SIZE) {
+int testCase(int TEST_VECTOR_ID, int DURATION_SIZE, int DATA_SEGMENT_SIZE) {
     
     int sum_cost=0;
     GPU *gpus[16];
@@ -67,7 +67,7 @@ int testCase(int TEST_VECTOR_ID, int DURATION_SIZE) {
             
         case 3:// all 0.5's
             for (int n=0; n<DURATION_SIZE*10; n++) {
-                task_arr[n]=0.75;
+                task_arr[n]=0.5;
             }
             break;
             
@@ -144,13 +144,15 @@ int testCase(int TEST_VECTOR_ID, int DURATION_SIZE) {
         //sum of cost
         sum_cost+=cost_dp+cost_tg;
         if (DEBUG_LOG) cout<<"sum of cost = "<<sum_cost<<endl;
-        
+        if ((i+1)%DATA_SEGMENT_SIZE == 0) {
+            cout << TEST_VECTOR_ID_NAMES[TEST_VECTOR_ID] << ","<<(i+1)<<","<<dropped_cycle_cnt << ","<< dropped_cycle_cost << ","<<sum_cost<<endl;
+        }
     }
     if (DEBUG_LOG) cout<<"Dropped Cycle: "<< dropped_cycle_cnt<<endl;
     if (DEBUG_LOG) cout<<"Dropped Cost: "<< dropped_cycle_cost<<endl;
     
     //cout << TEST_VECTOR_ID_NAMES[TEST_VECTOR_ID] << ", "<<DURATION_SIZE<<", dropped_cycles: "<<dropped_cycle_cnt << ", dropped_cost: "<< dropped_cycle_cost << ", total cost: "<<sum_cost<<endl;
-    cout << TEST_VECTOR_ID_NAMES[TEST_VECTOR_ID] << ","<<DURATION_SIZE<<","<<dropped_cycle_cnt << ","<< dropped_cycle_cost << ","<<sum_cost<<endl;
+    
     
     return 0;
     
@@ -158,16 +160,13 @@ int testCase(int TEST_VECTOR_ID, int DURATION_SIZE) {
 
 int main() {
     // debug
-    testCase(0, 50);
-    return 0;
+//    testCase(0, 50);
+//    return 0;
     // debug end
     
     srand(999);
     cout<<"data_type,duration_cnt,dropped_cycles,dropped_cost,totoal_cost"<<endl;
     for (int data_id = 0; data_id<4; data_id++) {
-        for (int data_size=10000; data_size<=10*10000; data_size+=10000) {
-            testCase(data_id, data_size);
-        }
+        testCase(data_id, 20000, 1000);
     }
-    
 }

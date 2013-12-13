@@ -13,7 +13,7 @@ class GPU {
 
 public:
     //const bool DEBUG_LOG = false;
-    const bool DEBUG_LOG = true;
+    const bool DEBUG_LOG = false;
     int hot,k,counter,f_idle,f_ready;//time;
     double array[10];
     double avg =0;
@@ -82,7 +82,7 @@ public:
             }
             avg = sum/10;
             if (DEBUG_LOG) cout<<"array index in GPU = "<<counter<<endl;
-            if(avg >= 0.5) {
+            if(avg > 0.499) {
                 passive_idle();
             }else{
                 ready();
